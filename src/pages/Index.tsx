@@ -5,6 +5,13 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -21,17 +28,245 @@ interface Game {
   image: string;
   rating: number;
   inLibrary?: boolean;
+  description: string;
+  developer: string;
+  releaseDate: string;
+  requirements: {
+    os: string;
+    processor: string;
+    memory: string;
+    graphics: string;
+    storage: string;
+  };
+  screenshots: string[];
+  reviews: { author: string; rating: number; text: string; date: string }[];
 }
 
 const MOCK_GAMES: Game[] = [
-  { id: 1, title: 'Cyberpunk 2077', price: 2999, platform: ['PC', 'Console'], genre: 'RPG', image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500', rating: 4.5 },
-  { id: 2, title: 'Half-Life: Alyx', price: 1499, platform: ['VR'], genre: 'Action', image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=500', rating: 5.0 },
-  { id: 3, title: 'Beat Saber', price: 999, platform: ['VR'], genre: 'Music', image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500', rating: 4.8 },
-  { id: 4, title: 'Call of Duty Mobile', price: 0, platform: ['Mobile'], genre: 'Shooter', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500', rating: 4.2 },
-  { id: 5, title: 'Genshin Impact', price: 0, platform: ['PC', 'Mobile'], genre: 'RPG', image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500', rating: 4.6 },
-  { id: 6, title: 'Red Dead Redemption 2', price: 3499, platform: ['PC', 'Console'], genre: 'Adventure', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500', rating: 4.9 },
-  { id: 7, title: 'Among Us', price: 199, platform: ['Mobile', 'PC'], genre: 'Casual', image: 'https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?w=500', rating: 4.1 },
-  { id: 8, title: 'Minecraft', price: 799, platform: ['PC', 'Mobile', 'Console'], genre: 'Sandbox', image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=500', rating: 4.7 },
+  {
+    id: 1,
+    title: 'Cyberpunk 2077',
+    price: 2999,
+    platform: ['PC', 'Console'],
+    genre: 'RPG',
+    image: 'https://cdn.poehali.dev/projects/f99da123-0598-41a0-a66c-c49e1a7e6712/files/c7263523-04b1-44be-bcd9-7bc1eb47fe39.jpg',
+    rating: 4.5,
+    description: 'Киберпанк 2077 — это приключенческая ролевая игра с открытым миром, действие которой происходит в Найт-Сити, мегаполисе будущего, жители которого одержимы властью, гламуром и модификациями тела.',
+    developer: 'CD Projekt Red',
+    releaseDate: '10 декабря 2020',
+    requirements: {
+      os: 'Windows 10',
+      processor: 'Intel Core i7-4790 или AMD Ryzen 3 3200G',
+      memory: '12 ГБ ОЗУ',
+      graphics: 'NVIDIA GeForce GTX 1060 6GB или AMD Radeon R9 Fury',
+      storage: '70 ГБ',
+    },
+    screenshots: [
+      'https://cdn.poehali.dev/projects/f99da123-0598-41a0-a66c-c49e1a7e6712/files/c7263523-04b1-44be-bcd9-7bc1eb47fe39.jpg',
+      'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800',
+      'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800',
+    ],
+    reviews: [
+      { author: 'Игорь К.', rating: 5, text: 'Невероятная атмосфера и проработка мира! Лучшая RPG 2020 года.', date: '15 янв 2024' },
+      { author: 'Мария С.', rating: 4, text: 'Отличный сюжет, но были технические проблемы на старте.', date: '22 дек 2023' },
+    ],
+  },
+  {
+    id: 2,
+    title: 'Half-Life: Alyx',
+    price: 1499,
+    platform: ['VR'],
+    genre: 'Action',
+    image: 'https://cdn.poehali.dev/projects/f99da123-0598-41a0-a66c-c49e1a7e6712/files/97995802-59ec-406a-ac42-604b06635fdb.jpg',
+    rating: 5.0,
+    description: 'Half-Life: Alyx — флагманская VR-игра от Valve. Возвращение в культовую вселенную Half-Life с полным погружением в виртуальную реальность.',
+    developer: 'Valve',
+    releaseDate: '23 марта 2020',
+    requirements: {
+      os: 'Windows 10',
+      processor: 'Intel Core i5-7500 / AMD Ryzen 5 1600',
+      memory: '12 ГБ ОЗУ',
+      graphics: 'GTX 1060 / RX 580 - 6GB VRAM',
+      storage: '70 ГБ',
+    },
+    screenshots: [
+      'https://cdn.poehali.dev/projects/f99da123-0598-41a0-a66c-c49e1a7e6712/files/97995802-59ec-406a-ac42-604b06635fdb.jpg',
+      'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=800',
+      'https://images.unsplash.com/photo-1617802690992-15d93263d3a9?w=800',
+    ],
+    reviews: [
+      { author: 'Алексей В.', rating: 5, text: 'Эталон VR-игр! Абсолютный must-have для владельцев VR-шлемов.', date: '10 фев 2024' },
+      { author: 'Дмитрий Л.', rating: 5, text: 'Valve снова показали, как нужно делать игры. Шедевр!', date: '05 янв 2024' },
+    ],
+  },
+  {
+    id: 3,
+    title: 'Beat Saber',
+    price: 999,
+    platform: ['VR'],
+    genre: 'Music',
+    image: 'https://cdn.poehali.dev/projects/f99da123-0598-41a0-a66c-c49e1a7e6712/files/701b03f5-904b-42d4-a7e0-5bcd7b7032bd.jpg',
+    rating: 4.8,
+    description: 'Beat Saber — уникальная ритм-игра для VR, где вы рубите летящие кубики световыми мечами в такт музыке. Идеальное сочетание физической активности и развлечения.',
+    developer: 'Beat Games',
+    releaseDate: '21 мая 2019',
+    requirements: {
+      os: 'Windows 7/8.1/10',
+      processor: 'Intel Core i5 Sandy Bridge или эквивалент',
+      memory: '4 ГБ ОЗУ',
+      graphics: 'NVIDIA GTX 960 или эквивалент',
+      storage: '200 МБ',
+    },
+    screenshots: [
+      'https://cdn.poehali.dev/projects/f99da123-0598-41a0-a66c-c49e1a7e6712/files/701b03f5-904b-42d4-a7e0-5bcd7b7032bd.jpg',
+      'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800',
+      'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?w=800',
+    ],
+    reviews: [
+      { author: 'Екатерина П.', rating: 5, text: 'Лучший способ совместить спорт и игры! Играю каждый день.', date: '18 фев 2024' },
+      { author: 'Максим Р.', rating: 5, text: 'Невероятно затягивает! Отличная музыка и геймплей.', date: '12 фев 2024' },
+    ],
+  },
+  {
+    id: 4,
+    title: 'Call of Duty Mobile',
+    price: 0,
+    platform: ['Mobile'],
+    genre: 'Shooter',
+    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500',
+    rating: 4.2,
+    description: 'Культовый шутер Call of Duty теперь на мобильных устройствах! Многопользовательские сражения и королевская битва на вашем смартфоне.',
+    developer: 'Activision',
+    releaseDate: '1 октября 2019',
+    requirements: {
+      os: 'Android 5.1 / iOS 9.0',
+      processor: 'Snapdragon 625 или выше',
+      memory: '2 ГБ ОЗУ',
+      graphics: 'Adreno 506 или выше',
+      storage: '2 ГБ',
+    },
+    screenshots: [
+      'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+      'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800',
+      'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800',
+    ],
+    reviews: [
+      { author: 'Сергей М.', rating: 4, text: 'Отличная мобильная адаптация! Играю в метро каждый день.', date: '25 янв 2024' },
+      { author: 'Анна Д.', rating: 4, text: 'Хорошая графика для мобилки, но много микротранзакций.', date: '20 янв 2024' },
+    ],
+  },
+  {
+    id: 5,
+    title: 'Genshin Impact',
+    price: 0,
+    platform: ['PC', 'Mobile'],
+    genre: 'RPG',
+    image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500',
+    rating: 4.6,
+    description: 'Genshin Impact — бесплатная action-RPG с открытым миром в аниме-стиле. Исследуйте волшебный мир Тейвата и собирайте уникальных персонажей.',
+    developer: 'miHoYo',
+    releaseDate: '28 сентября 2020',
+    requirements: {
+      os: 'Windows 7 SP1 64-bit / iOS 9.0 / Android 7.0',
+      processor: 'Intel Core i5 / Snapdragon 845',
+      memory: '8 ГБ ОЗУ / 3 ГБ (мобильная)',
+      graphics: 'NVIDIA GeForce GT 1030',
+      storage: '30 ГБ',
+    },
+    screenshots: [
+      'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800',
+      'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800',
+      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800',
+    ],
+    reviews: [
+      { author: 'Ольга К.', rating: 5, text: 'Красивейшая графика и интересный сюжет! Затягивает надолго.', date: '08 фев 2024' },
+      { author: 'Иван П.', rating: 4, text: 'Отличная игра, но система гача может быть жесткой.', date: '01 фев 2024' },
+    ],
+  },
+  {
+    id: 6,
+    title: 'Red Dead Redemption 2',
+    price: 3499,
+    platform: ['PC', 'Console'],
+    genre: 'Adventure',
+    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500',
+    rating: 4.9,
+    description: 'Red Dead Redemption 2 — эпическое приключение на Диком Западе от Rockstar Games. Живой открытый мир с невероятным уровнем детализации.',
+    developer: 'Rockstar Games',
+    releaseDate: '5 декабря 2019',
+    requirements: {
+      os: 'Windows 7 SP1 64-bit',
+      processor: 'Intel Core i7-4770K / AMD Ryzen 5 1500X',
+      memory: '12 ГБ ОЗУ',
+      graphics: 'Nvidia GeForce GTX 1060 6GB / AMD Radeon RX 480 4GB',
+      storage: '150 ГБ',
+    },
+    screenshots: [
+      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800',
+      'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=800',
+      'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+    ],
+    reviews: [
+      { author: 'Павел Н.', rating: 5, text: 'Шедевр! Лучшая игра Rockstar. Детализация мира просто фантастическая.', date: '14 фев 2024' },
+      { author: 'Елена Г.', rating: 5, text: 'Невероятная атмосфера Дикого Запада. Эмоциональный сюжет.', date: '09 фев 2024' },
+    ],
+  },
+  {
+    id: 7,
+    title: 'Among Us',
+    price: 199,
+    platform: ['Mobile', 'PC'],
+    genre: 'Casual',
+    image: 'https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?w=500',
+    rating: 4.1,
+    description: 'Among Us — многопользовательская игра на социальную дедукцию. Работайте в команде, чтобы выжить на космическом корабле, но остерегайтесь предателей!',
+    developer: 'Innersloth',
+    releaseDate: '15 июня 2018',
+    requirements: {
+      os: 'Windows 7 SP1+ / iOS 10.0 / Android 4.4',
+      processor: 'SSE2 instruction set support',
+      memory: '1 ГБ ОЗУ',
+      graphics: 'Intel HD Graphics',
+      storage: '250 МБ',
+    },
+    screenshots: [
+      'https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?w=800',
+      'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+      'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800',
+    ],
+    reviews: [
+      { author: 'Никита А.', rating: 4, text: 'Отличная игра для компании друзей! Много смеха и напряжения.', date: '30 янв 2024' },
+      { author: 'София Б.', rating: 4, text: 'Простая, но затягивающая. Играем всей семьей.', date: '28 янв 2024' },
+    ],
+  },
+  {
+    id: 8,
+    title: 'Minecraft',
+    price: 799,
+    platform: ['PC', 'Mobile', 'Console'],
+    genre: 'Sandbox',
+    image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=500',
+    rating: 4.7,
+    description: 'Minecraft — культовая песочница, где вы можете строить что угодно из блоков. Исследуйте бесконечный мир, выживайте и воплощайте свои идеи в жизнь.',
+    developer: 'Mojang Studios',
+    releaseDate: '18 ноября 2011',
+    requirements: {
+      os: 'Windows 7 / iOS 8.0 / Android 5.0',
+      processor: 'Intel Core i3-3210 / AMD A8-7600',
+      memory: '4 ГБ ОЗУ',
+      graphics: 'Intel HD Graphics 4000 / AMD Radeon R5',
+      storage: '1 ГБ',
+    },
+    screenshots: [
+      'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800',
+      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800',
+      'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800',
+    ],
+    reviews: [
+      { author: 'Артём З.', rating: 5, text: 'Легенда! Играю уже 10 лет и не надоедает.', date: '16 фев 2024' },
+      { author: 'Виктория Х.', rating: 5, text: 'Лучшая игра для творчества. Дети в восторге!', date: '11 фев 2024' },
+    ],
+  },
 ];
 
 export default function Index() {
@@ -41,6 +276,7 @@ export default function Index() {
   const [library, setLibrary] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState('store');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
   const filteredGames = MOCK_GAMES.filter((game) => {
     const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -173,7 +409,8 @@ export default function Index() {
               {filteredGames.map((game) => (
                 <Card
                   key={game.id}
-                  className="overflow-hidden group hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1"
+                  className="overflow-hidden group hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                  onClick={() => setSelectedGame(game)}
                 >
                   <div className="aspect-[16/9] overflow-hidden">
                     <img
@@ -205,7 +442,10 @@ export default function Index() {
                       <Button
                         size="sm"
                         variant={library.includes(game.id) ? 'outline' : 'default'}
-                        onClick={() => toggleLibrary(game.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleLibrary(game.id);
+                        }}
                         className="gap-1"
                       >
                         {library.includes(game.id) ? (
@@ -294,6 +534,177 @@ export default function Index() {
           </div>
         )}
       </main>
+
+      <Dialog open={!!selectedGame} onOpenChange={() => setSelectedGame(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {selectedGame && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold">{selectedGame.title}</DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-6">
+                <div className="aspect-video w-full overflow-hidden rounded-lg">
+                  <img
+                    src={selectedGame.image}
+                    alt={selectedGame.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Icon name="Star" size={20} className="text-yellow-500 fill-yellow-500" />
+                    <span className="text-lg font-semibold">{selectedGame.rating}</span>
+                  </div>
+                  {selectedGame.platform.map((p) => (
+                    <Badge key={p} variant="secondary">{p}</Badge>
+                  ))}
+                  <Badge variant="outline">{selectedGame.genre}</Badge>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-3xl font-bold text-primary">
+                      {selectedGame.price === 0 ? 'Бесплатно' : `${selectedGame.price} ₽`}
+                    </span>
+                    <Button
+                      size="lg"
+                      variant={library.includes(selectedGame.id) ? 'outline' : 'default'}
+                      onClick={() => toggleLibrary(selectedGame.id)}
+                      className="gap-2"
+                    >
+                      {library.includes(selectedGame.id) ? (
+                        <>
+                          <Icon name="Check" size={20} />
+                          В библиотеке
+                        </>
+                      ) : (
+                        <>
+                          <Icon name="ShoppingCart" size={20} />
+                          Добавить в библиотеку
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                <Tabs defaultValue="about" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="about">Описание</TabsTrigger>
+                    <TabsTrigger value="requirements">Требования</TabsTrigger>
+                    <TabsTrigger value="reviews">Отзывы</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="about" className="space-y-4 mt-4">
+                    <div>
+                      <h3 className="font-semibold mb-2">О игре</h3>
+                      <p className="text-muted-foreground leading-relaxed">{selectedGame.description}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Разработчик</p>
+                        <p className="font-medium">{selectedGame.developer}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Дата выхода</p>
+                        <p className="font-medium">{selectedGame.releaseDate}</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold mb-3">Скриншоты</h3>
+                      <div className="grid grid-cols-3 gap-2">
+                        {selectedGame.screenshots.map((screenshot, idx) => (
+                          <div key={idx} className="aspect-video overflow-hidden rounded-md">
+                            <img
+                              src={screenshot}
+                              alt={`Screenshot ${idx + 1}`}
+                              className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="requirements" className="space-y-4 mt-4">
+                    <div>
+                      <h3 className="font-semibold mb-3">Системные требования</h3>
+                      <div className="space-y-3">
+                        <div className="flex gap-2">
+                          <Icon name="MonitorSmartphone" size={20} className="text-primary flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Операционная система</p>
+                            <p className="font-medium">{selectedGame.requirements.os}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Icon name="Cpu" size={20} className="text-primary flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Процессор</p>
+                            <p className="font-medium">{selectedGame.requirements.processor}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Icon name="MemoryStick" size={20} className="text-primary flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Оперативная память</p>
+                            <p className="font-medium">{selectedGame.requirements.memory}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Icon name="Zap" size={20} className="text-primary flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Видеокарта</p>
+                            <p className="font-medium">{selectedGame.requirements.graphics}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Icon name="HardDrive" size={20} className="text-primary flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="text-sm text-muted-foreground">Место на диске</p>
+                            <p className="font-medium">{selectedGame.requirements.storage}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="reviews" className="space-y-4 mt-4">
+                    <div>
+                      <h3 className="font-semibold mb-3">Отзывы игроков</h3>
+                      <div className="space-y-4">
+                        {selectedGame.reviews.map((review, idx) => (
+                          <Card key={idx} className="p-4">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                                  <Icon name="User" size={16} />
+                                </div>
+                                <div>
+                                  <p className="font-medium">{review.author}</p>
+                                  <p className="text-xs text-muted-foreground">{review.date}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Icon name="Star" size={14} className="text-yellow-500 fill-yellow-500" />
+                                <span className="text-sm font-medium">{review.rating}</span>
+                              </div>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{review.text}</p>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <footer className="border-t border-border mt-16">
         <div className="container mx-auto px-4 py-8">
